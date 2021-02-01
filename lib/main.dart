@@ -1,6 +1,7 @@
 /* 3-1. ボタン */
 
 import 'package:flutter/material.dart';
+import 'package:english_words/english_words.dart';
 
 void main() => runApp(MyApp());
 
@@ -9,57 +10,50 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: "My Simple App",
-      home: Scaffold(
-        appBar: AppBar(
-          title: Text("Live!人工知能"),
-        ),
-        body: Center(
-          child: MyForm(),
-        ),
-      ),
+      home: RandomWords(),
     );
   }
 }
 
-class MyForm extends StatefulWidget {
+class RandomWords extends StatefulWidget {
   @override
-  _MyFormState createState() => _MyFormState();
+  _RandomWordsState createState() => _RandomWordsState();
 }
 
-class _MyFormState extends State<MyForm> {
-  int _count = 0;
+class _RandomWordsState extends State<RandomWords> {
+    final List<WordPair> _suggestions = <WordPair>[];
+    final TextStyle _biggerFont = const TextStyle(fontSize: 18);
 
-  void _handlePressed() {
-    setState(() {  // 状態を保持する変数を変更する処理は、setState内に記述する
-      _count++;
-    });
-  }
+    Widget _buildRow(WordPair pair) {
+      return ListTile(
+        title: Text(
+          pair.asPascalCase,
+          style: _biggerFont,
+        ),
+      );
+    }
 
-  Widget build(BuildContext context) {
-    return Container(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Text(
-              "$_count",
-              style: TextStyle(
-                color:Colors.blueAccent,
-                fontSize: 30.0,
-              ),
-            ),
-            FlatButton(  // 一番シンプルなボタン
-              onPressed: _handlePressed,
-              color: Colors.blue,
-              child: Text(
-                "いいね!",
-                style: TextStyle(
-                    color:Colors.white,
-                    fontSize: 20.0
-                ),
-              ),
-            )
-          ],
-        )
-    );
-  }
+    Widget _buildSuggestions() {
+      return ListView.builder(
+        padding: const EdgeInsets.all(16.0),
+        itemBuilder: (context, i) {
+          if (i.isOdd) return Divider();
+
+          final index = i ~/ 2;
+          if (index >= _suggestions.length) {
+            _suggestions.addAll(generateWordPairs().take(10));
+          }
+          return _buildRow(_suggestions[index]);
+        });
+    }
+
+    @override
+    Widget build(BuildContext context) {
+      return Scaffold(
+        appBar: AppBar(
+          title: Text('Startup Name Generator'),
+        ),
+        body: _buildSuggestions(),
+      );
+    }
 }
