@@ -31,7 +31,10 @@ dependencies:
 
   english_words: ^3.1.5
 
+  webview_flutter: ^0.3.0
+
 dev_dependencies:
+  flutter_native_splash: ^0.2.9
   flutter_test:
     sdk: flutter
 
@@ -76,3 +79,6 @@ flutter:
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/custom-fonts/#from-packages
+flutter_native_splash:
+  # color is the only required parameter.  It sets the background color of your splash screen.
+  color: "#42a5f5"

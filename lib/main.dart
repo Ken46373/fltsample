@@ -1,59 +1,45 @@
-/* 3-1. ボタン */
-
 import 'package:flutter/material.dart';
-import 'package:english_words/english_words.dart';
+import 'package:webview_flutter/webview_flutter.dart';
 
-void main() => runApp(MyApp());
+void main() => runApp(MaterialApp(home:WebViewExample()));
 
-class MyApp extends StatelessWidget {
+class WebViewExample extends StatefulWidget {
+  @override
+  State<StatefulWidget> createState() => _WebViewExampleState();
+}
+
+class _WebViewExampleState extends State<WebViewExample> {
+  WebViewController _controller;
+
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: "My Simple App",
-      home: RandomWords(),
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Webview Demo'),
+        actions: <Widget>[
+          IconButton(
+            icon: Icon(Icons.refresh),
+            onPressed: () {
+              _controller.loadUrl('https://www.twitch.tv/');
+            },
+          ),
+          IconButton(
+            icon: Icon(Icons.add_comment),
+            onPressed: () {
+              showDialog(context: context, builder: (context) {
+                return AlertDialog(title: Text('webviewの上に表示'),);
+              });
+            },
+          ),
+        ],
+      ),
+      body: WebView(
+        initialUrl: 'https://youtube.com',
+        javascriptMode: JavascriptMode.unrestricted,
+        onWebViewCreated: (WebViewController controller) {
+          _controller = controller;
+        },
+      ),
     );
   }
-}
-
-class RandomWords extends StatefulWidget {
-  @override
-  _RandomWordsState createState() => _RandomWordsState();
-}
-
-class _RandomWordsState extends State<RandomWords> {
-    final List<WordPair> _suggestions = <WordPair>[];
-    final TextStyle _biggerFont = const TextStyle(fontSize: 18);
-
-    Widget _buildRow(WordPair pair) {
-      return ListTile(
-        title: Text(
-          pair.asPascalCase,
-          style: _biggerFont,
-        ),
-      );
-    }
-
-    Widget _buildSuggestions() {
-      return ListView.builder(
-        padding: const EdgeInsets.all(16.0),
-        itemBuilder: (context, i) {
-          if (i.isOdd) return Divider();
-
-          final index = i ~/ 2;
-          if (index >= _suggestions.length) {
-            _suggestions.addAll(generateWordPairs().take(10));
-          }
-          return _buildRow(_suggestions[index]);
-        });
-    }
-
-    @override
-    Widget build(BuildContext context) {
-      return Scaffold(
-        appBar: AppBar(
-          title: Text('Startup Name Generator'),
-        ),
-        body: _buildSuggestions(),
-      );
-    }
 }
